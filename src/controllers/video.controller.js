@@ -4,7 +4,11 @@ import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  deleteImageFromCloudinary,
+  deleteVideoFromCloudinary,
+  uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 
 const uploadVideo = asyncHandler(async (req, res) => {
   //1 - get video details - title,description
@@ -48,21 +52,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
   //step 4.5
 
   const videoFileDuration = videoFile.duration;
-
-  //steps to find owner name
-  //we have id of user , if we match user id in users and from there we can extract the user name
-
-  // const userDocument = await User.aggregate([
-  //   {
-  //     $match:{
-  //       _id: new mongoose.Types.ObjectId(req.user._id)
-  //     }
-  //   }
-  // ])
-
-  // const ownerName = userDocument[0].username
-  // console.log("owner name is :",ownerName);
-  // console.log(typeof(ownerName));
+  const videoFilePublicId = videoFile.public_id;
+  const thumbnailPublicId = thumbnail.public_id;
 
   //step 5
   const video = await Video.create({
@@ -72,6 +63,8 @@ const uploadVideo = asyncHandler(async (req, res) => {
     thumbnail: thumbnail.url,
     duration: videoFileDuration,
     owner: req.user._id,
+    videoPublicId: videoFilePublicId,
+    thumbnailPublicId: thumbnailPublicId,
   });
 
   //step 6
@@ -88,7 +81,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdVideo, "Video uploaded Successfully ."));
 });
 
-const deletevideo = asyncHandler(async (req, res) => {
+const deleteVideo = asyncHandler(async (req, res) => {
   //get a video id
   //check if video exists
   //check if video is uploaded by requesting user
@@ -97,11 +90,9 @@ const deletevideo = asyncHandler(async (req, res) => {
   //return response
 
   const { videoId } = req.body;
-  console.log(videoId);
-
 
   if (!videoId) {
-    throw new ApiError(400, "please provide a video to delete");
+    throw new ApiError(400, "please provide a videoId for video to delete");
   }
 
   const video = await Video.findById(videoId);
@@ -111,7 +102,7 @@ const deletevideo = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(req.user?._id);
-  
+
   const userId = user._Id;
 
   if (video.owner !== userId) {
@@ -123,9 +114,17 @@ const deletevideo = asyncHandler(async (req, res) => {
 
   await Video.findByIdAndDelete(videoId);
 
+  //delete from cloudinary
+
+  const videoPublicId = video.public_id;
+  const thumbnailPublicId = video.public_id;
+
+  deleteVideoFromCloudinary(videoPublicId);
+  deleteImageFromCloudinary(thumbnailPublicId);
+
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Video deleted successfully"));
+    .json(new ApiResponse(200,{}, "Video deleted successfully"));
 });
 
-export { uploadVideo, deletevideo };
+export { uploadVideo, deleteVideo };

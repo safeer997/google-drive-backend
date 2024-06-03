@@ -3,7 +3,7 @@ import { loginUser, logoutUser, refreshAccessToken, registerUser } from "../cont
 
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { deletevideo, uploadVideo } from "../controllers/video.controller.js";
+import { deleteVideo, uploadVideo } from "../controllers/video.controller.js";
 
 const router = Router();
 
@@ -42,7 +42,7 @@ router.route("/upload-video").post(
   ]),
   uploadVideo
 )
-router.route("/delete-video").post(verifyJWT,deletevideo)
+router.route("/delete-video").post(verifyJWT,deleteVideo)
 
 
 

@@ -1,51 +1,17 @@
 import { Router } from "express";
-import { loginUser, logoutUser, refreshAccessToken, registerUser } from "../controllers/user.controller.js";
 
+import { createFolder, getFolders, getFolderById, updateFolder, deleteFolder } from "../controllers/folder.controller.js";
+import { createFile, getFileById, updateFile, deleteFile } from "../controllers/file.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { deleteVideo, uploadVideo } from "../controllers/video.controller.js";
 
 const router = Router();
 
-router.route("/register").post(
-  upload.fields([
-    {
-      name: "avatar",
-      maxCount: 1,
-    },
-    {
-      name: "coverImage",
-      maxCount: 1,
-    },
-  ]),
+// Folder routes
+router.route("/folders").post(createFolder).get(getFolders);
+router.route("/folders/:id").get(getFolderById).put(updateFolder).delete(deleteFolder);
 
-  registerUser
-);
-
-router.route("/login").post(loginUser)
-
-//secured routes 
-
-router.route("/logout").post(verifyJWT,logoutUser)
-router.route("/refresh-token").post(refreshAccessToken)
-router.route("/upload-video").post(
-  verifyJWT,
-  upload.fields([
-    {
-      name: "thumbnail",
-      maxCount: 1,
-    },
-    {
-      name: "videoFile",
-      maxCount: 1,
-    },
-  ]),
-  uploadVideo
-)
-router.route("/delete-video").post(verifyJWT,deleteVideo)
-
-
-
-
+// File routes
+router.route("/files").post(upload.single('file'), createFile);
+router.route("/files/:id").get(getFileById).put(updateFile).delete(deleteFile);
 
 export default router;

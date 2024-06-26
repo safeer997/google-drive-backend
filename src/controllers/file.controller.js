@@ -22,6 +22,15 @@ const createFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newFile, "File created successfully"));
 });
 
+//get all files
+
+const getFiles = asyncHandler(async (req, res) => {
+  const files = await File.find();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, files, "Files fetched successfully"));
+});
+
 const getFileById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -56,19 +65,17 @@ const updateFile = asyncHandler(async (req, res) => {
 const deleteFile = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const dbFile = await File.findById(id);
-  if (!dbFile) {
+  const file = await File.findById(id);
+  if (!file) {
     throw new ApiError(404, "File not found");
   }
 
-  if (fs.existsSync(dbFile.path)) {
+  if (fs.existsSync(file.path)) {
     try {
-      fs.unlinkSync(dbFile.path);
+      fs.unlinkSync(file.path);
     } catch (error) {
       throw new ApiError(500, "Error deleting the file from the filesystem");
     }
-  } else {
-    throw new ApiError(404, "File not found on the filesystem");
   }
 
   await File.findByIdAndDelete(id);
@@ -78,4 +85,4 @@ const deleteFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "File deleted successfully"));
 });
 
-export { createFile, getFileById, updateFile, deleteFile };
+export { createFile,getFiles , getFileById, updateFile, deleteFile };

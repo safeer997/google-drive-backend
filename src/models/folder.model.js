@@ -1,25 +1,16 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const folderSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    subfolders: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Folder",
-      },
-    ],
-    files: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "File",
-      },
-    ],
+const folderSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
   },
-  { timestamps: true }
-);
+  files: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "File"
+  }]
+},{timestamps:true});
 
-export const Folder = mongoose.model("Folder", folderSchema);
+const Folder = mongoose.model("Folder", folderSchema);
+
+export { Folder };

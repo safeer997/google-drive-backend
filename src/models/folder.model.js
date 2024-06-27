@@ -8,7 +8,11 @@ const folderSchema = new mongoose.Schema({
   files: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "File"
-  }]
+  }],
+  path:{
+    type:String,
+    required:true,
+  }
 },{timestamps:true});
 
 const Folder = mongoose.model("Folder", folderSchema);

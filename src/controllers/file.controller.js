@@ -22,8 +22,6 @@ const createFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newFile, "File created successfully"));
 });
 
-//get all files
-
 const getFiles = asyncHandler(async (req, res) => {
   const files = await File.find();
   return res
@@ -62,6 +60,30 @@ const updateFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedFile, "File updated successfully"));
 });
 
+const updateIconColor = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const { color } = req.body;
+
+  if (!color) {
+    throw new ApiError(400, "color is required");
+  }
+
+  const updatedFile = await File.findByIdAndUpdate(
+    id,
+    { color },
+    { new: true }
+  );
+
+  if (!updatedFile) {
+    throw new ApiError(404, "File not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedFile, "Color updated successfully"));
+});
+
 const deleteFile = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -85,4 +107,11 @@ const deleteFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "File deleted successfully"));
 });
 
-export { createFile,getFiles , getFileById, updateFile, deleteFile };
+export {
+  createFile,
+  getFiles,
+  getFileById,
+  updateFile,
+  deleteFile,
+  updateIconColor,
+};

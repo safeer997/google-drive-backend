@@ -12,25 +12,28 @@ import {
   getFileById,
   updateFile,
   deleteFile,
+  updateIconColor,
 } from "../controllers/file.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
 // Folder routes
-router.route("/folders").post(createFolder).get(getFolders);
-
-router
-  .route("/folders/:id")
-  .get(getFolderById)
-  .put(updateFolder)
-  .delete(deleteFolder);
+router.route("/folders").post(createFolder);
+router.route("/folders").get(getFolders);
+router.route("/folders/:id").get(getFolderById);
+router.route("/folders/:id").put(updateFolder);
+router.route("/folders/:id").delete(deleteFolder);
 
 // File routes
 router.route("/files").post(upload.single("file"), createFile);
 
 router.route("/files").get(getFiles);
 
-router.route("/files/:id").get(getFileById).put(updateFile).delete(deleteFile);
+router.route("/files/:id").get(getFileById).delete(deleteFile);
+
+router.route("/files/:id").put(updateFile);
+
+router.route("/files/color/:id").put(updateIconColor);
 
 export default router;

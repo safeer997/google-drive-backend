@@ -1,11 +1,5 @@
 import { Router } from "express";
-import {
-  createFolder,
-  getFolders,
-  getFolderById,
-  updateFolder,
-  deleteFolder,
-} from "../controllers/folder.controller.js";
+
 import {
   createFile,
   getFiles,
@@ -17,13 +11,6 @@ import {
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
-
-// Folder routes
-router.route("/folders").post(createFolder);
-router.route("/folders").get(getFolders);
-router.route("/folders/:id").get(getFolderById);
-router.route("/folders/:id").put(updateFolder);
-router.route("/folders/:id").delete(deleteFolder);
 
 // File routes
 router.route("/files").post(upload.single("file"), createFile);

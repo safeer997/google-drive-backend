@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { File } from "../models/file.model.js";
 import fs from "fs";
 
+//fn to create new file
 const createFile = asyncHandler(async (req, res) => {
   const file = req.file;
 
@@ -22,6 +23,7 @@ const createFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newFile, "File created successfully"));
 });
 
+//fn to get all files
 const getFiles = asyncHandler(async (req, res) => {
   const files = await File.find();
   return res
@@ -29,20 +31,8 @@ const getFiles = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, files, "Files fetched successfully"));
 });
 
-const getFileById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  const file = await File.findById(id);
-  if (!file) {
-    throw new ApiError(404, "File not found");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, file, "File fetched successfully"));
-});
-
-const updateFile = asyncHandler(async (req, res) => {
+//fn to rename 
+const renameFile = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -60,6 +50,8 @@ const updateFile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedFile, "File updated successfully"));
 });
 
+
+//fn to change iconColor
 const updateIconColor = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -84,6 +76,7 @@ const updateIconColor = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedFile, "Color updated successfully"));
 });
 
+//fn to delete file
 const deleteFile = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -110,8 +103,7 @@ const deleteFile = asyncHandler(async (req, res) => {
 export {
   createFile,
   getFiles,
-  getFileById,
-  updateFile,
+  renameFile,
   deleteFile,
   updateIconColor,
 };
